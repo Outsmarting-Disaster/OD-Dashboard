@@ -1,46 +1,35 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-import Map, {
-  Marker,
-  Source,
-  Layer,
-  Popup,
-  NavigationControl,
-  FullscreenControl,
-  ScaleControl,
-  GeolocateControl,
-} from "react-map-gl";
+import { Typography } from "@mui/material";
 import GeoJSON from "geojson";
-import reactLogo from "./assets/react.svg";
 import "mapbox-gl/dist/mapbox-gl.css";
-import CITIES from "./.data/cities.json";
-import viteLogo from "/vite.svg";
+import { useEffect, useRef, useState } from "react";
+import type { GeoJSONSource } from "react-map-gl";
+import Map, {
+  FullscreenControl,
+  GeolocateControl,
+  Layer,
+  Marker,
+  NavigationControl,
+  Popup,
+  ScaleControl,
+  Source,
+} from "react-map-gl";
 import "./App.css";
-import Pin from "./components/Pin";
 import {
-  clusterLayer,
   clusterCountLayer,
+  clusterLayer,
   unclusteredPointLayer,
 } from "./components/Layers";
-import type { GeoJSONSource } from "react-map-gl";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  Chip,
-  Typography,
-} from "@mui/material";
-import AirIcon from "@mui/icons-material/Air";
-import { Stack } from "@mui/system";
+import Pin from "./components/Pin";
 import NavBar from "./layout/NavBar";
 const TOKEN =
   "pk.eyJ1IjoiZmFuZGlsbGFkcCIsImEiOiJja2t2bGhtdW8xNWE1MnBsbXR5bTFyNm94In0.Cw8RqeLPToDY7XpQuI4cjw"; // Set your mapbox token here
 
-import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
+import { ScrollMenu } from "react-horizontal-scrolling-menu";
 import "react-horizontal-scrolling-menu/dist/styles.css";
 import { LeftArrow, RightArrow } from "./components/Arrow";
-import usePreventBodyScroll from "./components/UsePreventBodyScroll";
 import { Card } from "./components/Card";
 import HeaderDevice from "./components/HeaderDevice";
+import usePreventBodyScroll from "./components/UsePreventBodyScroll";
 const elemPrefix = "test";
 const getId = (index: number) => `${elemPrefix}${index}`;
 
@@ -80,8 +69,7 @@ function App() {
       if (err) {
         console.log(err);
       }
-      if (mapRef.current.getZoom() >= 4) {
-        console.log("ok");
+      if (mapRef.current.getZoom() >= 3) {
         setMarkerVisible(true);
       }
       mapRef.current.easeTo({
@@ -108,7 +96,6 @@ function App() {
     return fetch("https://api.smartcitizen.me/v0/devices/" + selectedDevice)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         setHasData(true);
         setOwner(responseJson.owner);
         setTheData(responseJson.data);
@@ -155,15 +142,14 @@ function App() {
         .then((response) => response.json())
         .then((responseJson) => {
           if (responseJson.readings) {
-            //console.log(responseJson.readings);
-            responseJson.readings.forEach(([x, y]) => {
-              xxx.push(x);
-              yyy.push(y);
-            });
-
+            // //console.log(responseJson.readings);
+            // responseJson.readings.forEach(([x, y]) => {
+            //   xxx.push(x);
+            //   yyy.push(y);
+            // });
             // TODO: here we are not using the correct method of adding the arrays to state object
-            sensor.x = xxx;
-            sensor.y = yyy;
+            // sensor.x = xxx;
+            // sensor.y = yyy;
             //that.setState({ theSensors: {x: xxx} })
             // that.setState((prevState) => ({
             //   //theSensors: [...prevState, xxx, yyy]
@@ -268,9 +254,6 @@ function App() {
           )}
         </Map>
       </div>
-      {/* {console.log(selectedDevice)} */}
-      {console.log("thesensor", )}
-      {/* {console.log(theKit)} */}
       {hasData && (
         <div style={{ backgroundColor: "#ffffff" }}>
           <div onMouseEnter={disableScroll} onMouseLeave={enableScroll}>

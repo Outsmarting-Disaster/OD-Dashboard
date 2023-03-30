@@ -1,9 +1,3 @@
-import React, { useState } from "react";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import NoiseAwareIcon from "@mui/icons-material/NoiseAware";
-import ThermostatIcon from "@mui/icons-material/Thermostat";
-import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
-import SpeedIcon from "@mui/icons-material/Speed";
 // import MiniPlot from "./MiniPlot.js";
 import {
   FaBatteryEmpty,
@@ -27,9 +21,7 @@ import {
   FaWifi,
 } from "react-icons/fa";
 
-import { VisibilityContext } from "react-horizontal-scrolling-menu";
 import { Typography } from "@mui/material";
-import MiniPlot from "./MiniPlot";
 
 export function Card(props: any) {
   const getBgColor = (id: any, value: any) => {
