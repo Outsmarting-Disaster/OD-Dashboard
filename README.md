@@ -19,7 +19,7 @@
 ## Getting Started
 
 ```bash
-yarn && yarn start
+yarn && yarn dev
 ```
 
 ## Credits 🎉
