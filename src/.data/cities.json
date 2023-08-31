@@ -1,52 +1,32 @@
 [
   {
-  "type": "City",
-  "city": null,
-  "name": "Indonesia",
-  "layer": "administrative",
-  "country_code": "ID",
-  "country": "Indonesia",
-  "latitude": -2.4833826,
-  "longitude": 117.8902853
+    "type": "City",
+    "city": "Bekasi",
+    "name": "Pantai Timur Bekasi",
+    "layer": "administrative",
+    "country_code": "ID",
+    "country": "Indonesia",
+    "latitude": -5.958578,
+    "longitude": 107.015513
   },
   {
-  "type": "City",
-  "city": "Indonesia",
-  "name": "Indonesia, Buleleng, Bali, 81111, Indonesia",
-  "layer": "village",
-  "country_code": "ID",
-  "country": "Indonesia",
-  "latitude": -8.1153337,
-  "longitude": 115.1083287
+    "type": "City",
+    "city": "Pulau Pasaran",
+    "name": "Berdaya Krui",
+    "layer": "village",
+    "country_code": "ID",
+    "country": "Indonesia",
+    "latitude": -5.466498016445214,
+    "longitude": 105.26486690406703
   },
   {
-  "type": "City",
-  "city": "Viña del Mar",
-  "name": "Indonesia, Villa Hermosa, Viña del Mar, Provincia de Valparaíso, Valparaiso Region, 2520000, Chile",
-  "layer": "residential",
-  "country_code": "CL",
-  "country": "Chile",
-  "latitude": -33.0330383,
-  "longitude": -71.4880397
-  },
-  {
-  "type": "City",
-  "city": "Parañaque",
-  "name": "Indonesia, Chateau Ville, Don Bosco, Parañaque, Southern Manila District, Metro Manila, 1711, Philippines",
-  "layer": "residential",
-  "country_code": "PH",
-  "country": "Philippines",
-  "latitude": 14.4839127,
-  "longitude": 121.0312197
-  },
-  {
-  "type": "City",
-  "city": "San Lorenzo",
-  "name": "INDONESIA, Los Laureles, San Lorenzo, Central Department, Región Oriental, 111427, Paraguay",
-  "layer": "residential",
-  "country_code": "PY",
-  "country": "Paraguay",
-  "latitude": -25.3268273,
-  "longitude": -57.489205
+    "type": "City",
+    "city": "Tanjung Setia Krui",
+    "name": "Sabana Surf",
+    "layer": "null",
+    "country_code": "CL",
+    "country": "Chile",
+    "latitude": -5.302349382992758,
+    "longitude": 103.99618011249376
   }
-  ]
+]

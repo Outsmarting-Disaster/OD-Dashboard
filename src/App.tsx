@@ -30,6 +30,31 @@ import { LeftArrow, RightArrow } from "./components/Arrow";
 import { Card } from "./components/Card";
 import HeaderDevice from "./components/HeaderDevice";
 import usePreventBodyScroll from "./components/UsePreventBodyScroll";
+
+import dataCities from "./.data/cities.json";
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 const elemPrefix = "test";
 const getId = (index: number) => `${elemPrefix}${index}`;
 
@@ -54,11 +79,10 @@ function App() {
   const [selectedFromDate, setSelectedFromDate] = useState<any | null>();
   const [selectedToDate, setSelectedToDate] = useState<any | null>();
   const [owner, setOwner] = useState<any | null>();
-  const [theData, setTheData] = useState<any | null>();
-  const [theDevice, setTheDevice] = useState<any | null>();
-  const [theKit, setTheKit] = useState<any | null>({});
-  const [theSensors, setTheSensors] = useState<any | null>([]);
-  const [theLocation, setTheLocation] = useState<any | null>({});
+  const [labels, setLabels] = useState<any | null>();
+  const [waveHeight, setWaveHeight] = useState<any | null>([]);
+  const [wavePeriod, setWavePeriod] = useState<any | null>([]);
+
   const handleClick = (event: any) => {
     const feature = event.features[0];
     const clusterId = feature.properties.cluster_id;
@@ -69,7 +93,7 @@ function App() {
       if (err) {
         console.log(err);
       }
-      if (mapRef.current.getZoom() >= 3) {
+      if (mapRef.current.getZoom() >= 1) {
         setMarkerVisible(true);
       }
       mapRef.current.easeTo({
@@ -80,96 +104,63 @@ function App() {
     });
   };
 
-  const getWorldMap = () => {
-    let theUrl = "https://api.smartcitizen.me/v0/devices/world_map";
-    return fetch(theUrl)
+  const getDeviceInfo = (device: any) => {
+    console.log("getDeviceInfo for selectedDevice...", device.name);
+    return fetch(
+      "https://marine-api.open-meteo.com/v1/marine?latitude=" +
+        device.latitude +
+        "&longitude=" +
+        device.longitude +
+        "&hourly=wave_height,wave_direction,wave_period"
+    )
       .then((response) => response.json())
       .then((responseJson) => {
-        setWorldMapGeojson(responseJson);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const getDeviceInfo = () => {
-    console.log("getDeviceInfo for selectedDevice...", selectedDevice);
-    return fetch("https://api.smartcitizen.me/v0/devices/" + selectedDevice)
-      .then((response) => response.json())
-      .then((responseJson) => {
+        // console.log(responseJson.hourly.wave_height);
+        setLabels(responseJson.hourly.time);
+        setWaveHeight(responseJson.hourly.wave_height);
+        setWavePeriod(responseJson.hourly.wave_period);
         setHasData(true);
-        setOwner(responseJson.owner);
-        setTheData(responseJson.data);
-        setTheLocation(responseJson.data.location);
-        setTheSensors(responseJson.data.sensors);
-        setTheKit(responseJson.kit),
-          () => {
-            // TODO: now it is safe to get the readings
-            //console.log('done, now get readings');
-            getReadingsForAllSensors();
-          };
       })
       .catch((err) => {
         console.log(err);
         setOwner([]);
-        setTheData([]);
-        setTheSensors([]);
-        setTheKit([]);
+        setLabels([]);
+        setWaveHeight([]);
+        setWavePeriod([]);
       });
   };
-  const getReadingsForAllSensors = () => {
-    console.log(
-      "get reading for ALL sensors, and jaming them into theSensors (without using state)"
-    );
-    let from_date = selectedFromDate.toISOString().slice(0, 10);
-    let to_date = selectedToDate.toISOString().slice(0, 10);
 
-    var device = selectedDevice;
-
-    theSensors.forEach(function (sensor: any) {
-      let xxx: any = [];
-      let yyy: any = [];
-
-      let url =
-        "https://api.smartcitizen.me/v0/devices/" +
-        device +
-        "/readings?sensor_id=" +
-        sensor.id +
-        "&rollup=15m&from=" +
-        from_date +
-        "&to=" +
-        to_date;
-      return fetch(url)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          if (responseJson.readings) {
-            // //console.log(responseJson.readings);
-            // responseJson.readings.forEach(([x, y]) => {
-            //   xxx.push(x);
-            //   yyy.push(y);
-            // });
-            // TODO: here we are not using the correct method of adding the arrays to state object
-            // sensor.x = xxx;
-            // sensor.y = yyy;
-            //that.setState({ theSensors: {x: xxx} })
-            // that.setState((prevState) => ({
-            //   //theSensors: [...prevState, xxx, yyy]
-            // }));
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Wave Height (Meter)",
+        data: waveHeight,
+        borderColor: "rgba(27, 188, 155)",
+        backgroundColor: "rgba(27, 188, 155, 0.5)",
+      },
+      // {
+      //   label: "Dataset 1",
+      //   data: wavePeriod,
+      //   borderColor: "rgba(230, 74, 25)",
+      //   backgroundColor: "rgba(230, 74, 25, 0.5)",
+      // },
+      // {
+      //   label: "Wave Periodic",
+      //   data: labelsTime.map(() => Math.random()),
+      //   borderColor: "rgba(248, 168, 37)",
+      //   backgroundColor: "rgba(248, 168, 37, 0.5)",
+      // },
+    ],
   };
-
   useEffect(() => {
     if (worldMapGeojson == null) {
-      getWorldMap();
+      setWorldMapGeojson(dataCities);
     }
-    const interval = setInterval(() => {
-      getDeviceInfo();
-    }, 60 * 1000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(() => {
+    //   getDeviceInfo();
+    // }, 60 * 1000);
+    // return () => clearInterval(interval);
   }, [selectedDevice]);
 
   return (
@@ -178,9 +169,9 @@ function App() {
       <div style={{ width: "100vw", height: "70vh", position: "relative" }}>
         <Map
           initialViewState={{
-            longitude: 108.8493669,
-            latitude: -2.4153123,
-            zoom: 3,
+            longitude: 105.8479331,
+            latitude: -5.9686535,
+            zoom: 5,
           }}
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={TOKEN}
@@ -200,7 +191,7 @@ function App() {
                 Point: ["latitude", "longitude"],
               })}
               cluster={true}
-              clusterMaxZoom={16}
+              clusterMaxZoom={3}
               clusterRadius={50}
             >
               <Layer {...clusterLayer} />
@@ -209,19 +200,18 @@ function App() {
             </Source>
           )}
           {markerVisible &&
-            worldMapGeojson.map((device: any, index: any) => (
+            dataCities.map((device: any, index: any) => (
               <Marker
                 key={`marker-${index}`}
                 longitude={device.longitude}
                 latitude={device.latitude}
                 anchor="bottom"
                 onClick={(e) => {
-                  // If we let the click event propagates to the map, it will immediately close the popup
-                  // with `closeOnClick: true`
                   e.originalEvent.stopPropagation();
                   setPopupInfo(device);
-                  setSelectedDevice(device.id);
-                  getDeviceInfo();
+                  console.log(device.name);
+                  // setSelectedDevice(device.id);
+                  getDeviceInfo(device);
                 }}
               >
                 <Pin />
@@ -247,7 +237,7 @@ function App() {
                 <Typography variant="subtitle2">{popupInfo.name}</Typography>
                 <br />
                 <Typography variant="subtitle2">
-                  hardware ID : {popupInfo.id}
+                  City: {popupInfo.city}
                 </Typography>
               </div>
             </Popup>
@@ -258,14 +248,92 @@ function App() {
         <div style={{ backgroundColor: "#ffffff" }}>
           <div onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu
-              Header={<HeaderDevice data={theKit} location={theLocation} />}
+              // Header={<HeaderDevice data={theKit} location={theLocation} />}
               LeftArrow={LeftArrow}
               RightArrow={RightArrow}
             >
-              {theSensors.map((sensor: any) => (
-                <Card data={sensor} />
-              ))}
+              {/* wave height */}
+              {/* <Card data={waveHeight} /> */}
+              <div></div>
             </ScrollMenu>
+          </div>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <div
+              style={{
+                maxHeight: "600px",
+                width: "60%",
+                background: "#ffff",
+                padding: "12px 24px",
+                margin: "20px",
+                outline: "none",
+                textAlign: "center",
+              }}
+            >
+              <Line options={options1} data={data} />
+            </div>
+            <Typography
+              style={{
+                maxHeight: "600px",
+                maxWidth: "40%",
+                background: "#ffff",
+                padding: "200px 24px",
+                margin: "20px",
+                outline: "none",
+              }}
+            >
+              Wave height data on our website, is obtained through our Spotter
+              metocean buoy. This cost-effective buoy gathers and sends
+              real-time information about wave height, wind speed, sea surface
+              temperature, and barometric pressure. This data is crucial for
+              understanding marine conditions, enabling timely responses to
+              potential risks, and enhancing safety measures for maritime
+              activities and coastal communities. By utilizing Spotter buoy
+              data, users can make informed decisions, optimize resource
+              management, and mitigate disaster risks effectively.
+            </Typography>
+          </div>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Typography
+              style={{
+                maxHeight: "600px",
+                maxWidth: "40%",
+                background: "#ffff",
+                padding: "200px 24px",
+                margin: "20px",
+                outline: "none",
+              }}
+            >
+              Wave height data on our website, is obtained through our Spotter
+              metocean buoy. This cost-effective buoy gathers and sends
+              real-time information about wave height, wind speed, sea surface
+              temperature, and barometric pressure. This data is crucial for
+              understanding marine conditions, enabling timely responses to
+              potential risks, and enhancing safety measures for maritime
+              activities and coastal communities. By utilizing Spotter buoy
+              data, users can make informed decisions, optimize resource
+              management, and mitigate disaster risks effectively.
+            </Typography>
+            <div
+              style={{
+                maxHeight: "600px",
+                width: "60%",
+                background: "#ffff",
+                padding: "12px 24px",
+                margin: "20px",
+                outline: "none",
+                textAlign: "center",
+              }}
+            >
+              <Line options={options2} data={data} />
+            </div>
           </div>
         </div>
       )}
@@ -274,3 +342,29 @@ function App() {
 }
 
 export default App;
+
+export const options1 = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    title: {
+      display: true,
+      text: "Wave Height (Meter)",
+    },
+  },
+};
+
+export const options2 = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    title: {
+      display: true,
+      text: "Wave Period (Second)",
+    },
+  },
+};

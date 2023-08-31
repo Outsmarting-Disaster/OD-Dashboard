@@ -15,12 +15,15 @@
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
     "@mui/styled-engine-sc": "^5.11.11",
+    "chart.js": "^4.3.3",
+    "faker": "^6.6.6",
     "geojson": "^0.5.0",
     "gh-pages": "^5.0.0",
     "mapbox-gl": "^2.13.0",
     "plotly.js": "^2.20.0",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-horizontal-scrolling-menu": "^4.0.1",
     "react-icons": "^4.8.0",
@@ -29,6 +32,7 @@
     "styled-components": "^5.3.9"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.0.0",
