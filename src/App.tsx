@@ -115,7 +115,7 @@ function App() {
     )
       .then((response) => response.json())
       .then((responseJson) => {
-        // console.log(responseJson.hourly.wave_height);
+        console.log(responseJson);
         setLabels(responseJson.hourly.time);
         setWaveHeight(responseJson.hourly.wave_height);
         setWavePeriod(responseJson.hourly.wave_period);
@@ -123,8 +123,6 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
-        setOwner([]);
-        setLabels([]);
         setWaveHeight([]);
         setWavePeriod([]);
       });
@@ -153,10 +151,34 @@ function App() {
       // },
     ],
   };
+  const dataWavePeriod = {
+    labels,
+    datasets: [
+      {
+        label: "Wave Period (Second)",
+        data: wavePeriod,
+        borderColor: "rgba(27, 188, 155)",
+        backgroundColor: "rgba(27, 188, 155, 0.5)",
+      },
+      // {
+      //   label: "Dataset 1",
+      //   data: wavePeriod,
+      //   borderColor: "rgba(230, 74, 25)",
+      //   backgroundColor: "rgba(230, 74, 25, 0.5)",
+      // },
+      // {
+      //   label: "Wave Periodic",
+      //   data: labelsTime.map(() => Math.random()),
+      //   borderColor: "rgba(248, 168, 37)",
+      //   backgroundColor: "rgba(248, 168, 37, 0.5)",
+      // },
+    ],
+  };
   useEffect(() => {
     if (worldMapGeojson == null) {
       setWorldMapGeojson(dataCities);
     }
+    // console.log(popupInfo)
     // const interval = setInterval(() => {
     //   getDeviceInfo();
     // }, 60 * 1000);
@@ -171,7 +193,7 @@ function App() {
           initialViewState={{
             longitude: 105.8479331,
             latitude: -5.9686535,
-            zoom: 5,
+            zoom: 2,
           }}
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={TOKEN}
@@ -209,7 +231,7 @@ function App() {
                 onClick={(e) => {
                   e.originalEvent.stopPropagation();
                   setPopupInfo(device);
-                  console.log(device.name);
+                  console.log(device);
                   // setSelectedDevice(device.id);
                   getDeviceInfo(device);
                 }}
@@ -248,11 +270,10 @@ function App() {
         <div style={{ backgroundColor: "#ffffff" }}>
           <div onMouseEnter={disableScroll} onMouseLeave={enableScroll}>
             <ScrollMenu
-              // Header={<HeaderDevice data={theKit} location={theLocation} />}
+              Header={<HeaderDevice data={popupInfo} location={popupInfo} />}
               LeftArrow={LeftArrow}
               RightArrow={RightArrow}
             >
-              {/* wave height */}
               {/* <Card data={waveHeight} /> */}
               <div></div>
             </ScrollMenu>
@@ -311,15 +332,7 @@ function App() {
                 outline: "none",
               }}
             >
-              Wave height data on our website, is obtained through our Spotter
-              metocean buoy. This cost-effective buoy gathers and sends
-              real-time information about wave height, wind speed, sea surface
-              temperature, and barometric pressure. This data is crucial for
-              understanding marine conditions, enabling timely responses to
-              potential risks, and enhancing safety measures for maritime
-              activities and coastal communities. By utilizing Spotter buoy
-              data, users can make informed decisions, optimize resource
-              management, and mitigate disaster risks effectively.
+             Periodic wave data is information about the length of time between the arrival of two consecutive ocean waves. In the context of wave data on our website, this refers to information about wave periods, which is the duration from one wave crest to the next.
             </Typography>
             <div
               style={{
@@ -332,7 +345,7 @@ function App() {
                 textAlign: "center",
               }}
             >
-              <Line options={options2} data={data} />
+              <Line options={options2} data={dataWavePeriod} />
             </div>
           </div>
         </div>

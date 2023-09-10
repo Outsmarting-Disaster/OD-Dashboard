@@ -28,9 +28,9 @@ export default function HeaderDevice(props: any) {
             <Typography variant="subtitle2">{location.city}</Typography>
           </div>
         </div>
-        <div style={{ display: "flex-end", marginRight: 10}}>
+        {/* <div style={{ display: "flex-end", marginRight: 10}}>
           <Typography variant="subtitle1">latest update : {kit.updated_at}</Typography>
-        </div>
+        </div> */}
       </div>
     </>
   );
